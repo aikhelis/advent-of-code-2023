@@ -7,7 +7,6 @@ function decipherCalibrationValueFromInputWithDigits(cipheredString){
     return Number(digits[0] + digits[digits.length-1] || 0);
 }
 
-const decipherRegex = /[1-9]|one|two|three|four|five|six|seven|eight|nine/g;
 const decipherMap = new Map([
     ['1', '1'], ['one',   '1'], 
     ['2', '2'], ['two',   '2'], 
@@ -21,17 +20,15 @@ const decipherMap = new Map([
 ]);
 
 function decipherCalibrationValue(cipheredString){
-    match = cipheredString.match(decipherRegex);
-    if(match == null) return 0;
-    let firstNumber = decipherMap.get(match[0]), firstIndex = cipheredString.indexOf(match[0]);
-    let lastNumber = firstNumber, lastIndex = firstIndex;
+    let firstNumber = '', firstIndex = cipheredString.length; 
+    let lastNumber = '', lastIndex = -1;
     decipherMap.forEach((value, key) => {
-        let i = cipheredString.indexOf(key);
-        let j = cipheredString.lastIndexOf(key);
-        if (i > 0 && i <= firstIndex) {
+        const i = cipheredString.indexOf(key);
+        const j = cipheredString.lastIndexOf(key);
+        if (i >= 0 && i < firstIndex) {
             firstNumber = value; firstIndex = i;
         };
-        if (j >= lastIndex) {
+        if (j > lastIndex) {
             lastNumber = value; lastIndex = j;
         };
     });
