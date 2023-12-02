@@ -1,8 +1,8 @@
 const readFile = require("../lib/readFile");
 
-function decipherCalibrationValueFromInputWithDigits(string){
+function decipherCalibrationValueFromInputWithDigits(cipheredString){
     // trim all non numerical characters from the input
-    let digits = string.replace(/[^\d]|0/g, '');
+    let digits = cipheredString.replace(/[^\d]|0/g, '');
     // 0 if no numbers in the input
     return Number(digits[0] + digits[digits.length-1] || 0);
 }
@@ -20,14 +20,14 @@ const decipherMap = new Map([
     ['9', '9'], ['nine',  '9']
 ]);
 
-function decipherCalibrationValue(string){
-    match = string.match(decipherRegex);
+function decipherCalibrationValue(cipheredString){
+    match = cipheredString.match(decipherRegex);
     if(match == null) return 0;
-    let firstNumber = decipherMap.get(match[0]), firstIndex = string.indexOf(match[0]);
+    let firstNumber = decipherMap.get(match[0]), firstIndex = cipheredString.indexOf(match[0]);
     let lastNumber = firstNumber, lastIndex = firstIndex;
     decipherMap.forEach((value, key) => {
-        let i = string.indexOf(key);
-        let j = string.lastIndexOf(key);
+        let i = cipheredString.indexOf(key);
+        let j = cipheredString.lastIndexOf(key);
         if (i > 0 && i <= firstIndex) {
             firstNumber = value; firstIndex = i;
         };
@@ -35,8 +35,6 @@ function decipherCalibrationValue(string){
             lastNumber = value; lastIndex = j;
         };
     });
-    // console.log('firstNumber: ' + Number(firstNumber));
-    // console.log('lastNumber: ' + Number(lastNumber));
     return Number(firstNumber + lastNumber);
 }
 
