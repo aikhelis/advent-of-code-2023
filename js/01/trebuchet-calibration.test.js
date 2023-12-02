@@ -1,5 +1,5 @@
-const {numberFromString, sumOfValues} = require('./task');
-const readFile = require('../readFile');
+const {decipherCalibrationValue, calibrationCheckSum} = require('./trebuchet-calibration');
+const readFile = require('../lib/readFile');
 
 test.each([
     ['12', 12],
@@ -26,23 +26,19 @@ test.each([
     ['8sevengzfvjrhnsb6ddb8ninerkgkxthtfkvbcmqs', 89],
     ['1seven336', 16],
     ['86one34vvvgdngbt39', 89],
-    ['7oneight', 78],
     ['eightwothree', 83],
+    ['7oneight', 78],
     ['eightwo', 82]
-])("numberFromString('%s') = %i", (string, number) => {
-    expect(numberFromString(string)).toBe(number);
+])("decipherCalibrationValue('%s') = %i", (string, number) => {
+    expect(decipherCalibrationValue(string)).toBe(number);
 });
 
-test("E2E: sumOfValues = 228 & 807", () => {
-    let list = readFile('day1/task1-test.txt')
-    expect(sumOfValues(list)).toBe(228);
-    list = readFile('day1/task2-test.txt')
-    expect(sumOfValues(list)).toBe(807);
+test("calibrationCheckSum(test data) = 807", () => {
+    const list = readFile('./01/input/input-test.txt')
+    expect(calibrationCheckSum(list)).toBe(807);
 });
 
-test("Final score: 54431", () => {
-    let list = readFile('day1/task1-input.txt')
-    expect(sumOfValues(list)).toBe(54431);
-    list = readFile('day1/task2-input.txt')
-    expect(sumOfValues(list)).toBe(54431);
+test("calibrationCheckSum(puzzle input) = 54431", () => {
+    const list = readFile('./01/input/input.txt')
+    expect(calibrationCheckSum(list)).toBe(54431);
 });
