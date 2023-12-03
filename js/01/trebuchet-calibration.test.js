@@ -34,7 +34,7 @@ test.each([
 });
 
 test("calibrationCheckSum(test data) = 807", () => {
-    const list = readFile('./01/input/input-test.txt')
+    const list = readFile('./01/input/input.test.txt')
     expect(calibrationCheckSum(list)).toBe(807);
 });
 

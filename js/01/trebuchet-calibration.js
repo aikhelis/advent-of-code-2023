@@ -1,5 +1,4 @@
-const readFile = require("../lib/readFile");
-
+//string dechiper for part1
 function decipherCalibrationValueFromInputWithDigits(cipheredString){
     // trim all non numerical characters from the input
     let digits = cipheredString.replace(/[^\d]|0/g, '');
