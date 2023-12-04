@@ -38,11 +38,11 @@ test.each([
 });
 
 test("powerOfGamesCheckSum(test data) = 2322", () => {
-    const list = readFile('./02/input/input.test.txt')
+    const list = readFile('./02/input/input.test.txt');
     expect(powerOfGamesCheckSum(list)).toBe(2322);
 });
 
 test("powerOfGamesCheckSum(puzzle input) = 66363", () => {
-    const list = readFile('./02/input/input.txt')
+    const list = readFile('./02/input/input.txt');
     expect(powerOfGamesCheckSum(list)).toBe(66363);
 });
