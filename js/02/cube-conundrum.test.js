@@ -1,5 +1,5 @@
 const {isGamePossible, possibeGamesCheckSum, powerOfCubeSetsInGame, powerOfGamesCheckSum} = require('./cube-conundrum');
-const readFile = require('../lib/readFile');
+const {readFileAndSplitLines} = require('../lib/readFile');
 
 test.each([
     ['Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green', true],
@@ -15,12 +15,12 @@ test.each([
 });
 
 test("possibeGamesCheckSum(test data) = 14", () => {
-    const list = readFile('./02/input/input.test.txt')
+    const list = readFileAndSplitLines('./02/input/input.test.txt')
     expect(possibeGamesCheckSum(list)).toBe(14);
 });
 
 test("possibeGamesCheckSum(puzzle input) = 2369", () => {
-    const list = readFile('./02/input/input.txt')
+    const list = readFileAndSplitLines('./02/input/input.txt')
     expect(possibeGamesCheckSum(list)).toBe(2369);
 });
 
@@ -38,11 +38,11 @@ test.each([
 });
 
 test("powerOfGamesCheckSum(test data) = 2322", () => {
-    const list = readFile('./02/input/input.test.txt');
+    const list = readFileAndSplitLines('./02/input/input.test.txt');
     expect(powerOfGamesCheckSum(list)).toBe(2322);
 });
 
 test("powerOfGamesCheckSum(puzzle input) = 66363", () => {
-    const list = readFile('./02/input/input.txt');
+    const list = readFileAndSplitLines('./02/input/input.txt');
     expect(powerOfGamesCheckSum(list)).toBe(66363);
 });

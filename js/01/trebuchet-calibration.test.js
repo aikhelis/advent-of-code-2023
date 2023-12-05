@@ -1,5 +1,5 @@
 const {decipherCalibrationValue, calibrationCheckSum} = require('./trebuchet-calibration');
-const readFile = require('../lib/readFile');
+const {readFileAndSplitLines} = require('../lib/readFile');
 
 test.each([
     ['12', 12],
@@ -34,11 +34,11 @@ test.each([
 });
 
 test("calibrationCheckSum(test data) = 807", () => {
-    const list = readFile('./01/input/input.test.txt')
+    const list = readFileAndSplitLines('./01/input/input.test.txt')
     expect(calibrationCheckSum(list)).toBe(807);
 });
 
 test("calibrationCheckSum(puzzle input) = 54431", () => {
-    const list = readFile('./01/input/input.txt')
+    const list = readFileAndSplitLines('./01/input/input.txt')
     expect(calibrationCheckSum(list)).toBe(54431);
 });

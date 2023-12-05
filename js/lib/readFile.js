@@ -1,6 +1,12 @@
 const fs = require('fs');
 const path = require('path');
+
 function readFile(file) {
-    return fs.readFileSync(path.resolve(file), 'utf8').split('\n');
+    return fs.readFileSync(path.resolve(file), 'utf8');
 }
-module.exports = readFile;
+
+function readFileAndSplitLines(file) {
+    return readFile(file).split('\n');
+}
+
+module.exports = {readFile, readFileAndSplitLines};
