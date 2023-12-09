@@ -396,6 +396,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+.DB_Store
 js/.DS_Store
 js/01/.DS_Store
 js/01/trebuchet-calibration.test.js
