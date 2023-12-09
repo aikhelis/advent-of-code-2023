@@ -1,6 +1,6 @@
-const {readFileAndSplitLines} = require('../lib/readFile');
-const testInput   = readFileAndSplitLines('./js/09/test.txt').map( a => a.split(' ').map(Number) );
-const puzzleInput = readFileAndSplitLines('./js/09/input.txt').map( a => a.split(' ').map(Number) );
+const {readFileLines} = require('../lib/readFile');
+const testInput   = readFileLines('./js/09/test.txt').map( a => a.split(' ').map(Number) );
+const puzzleInput = readFileLines('./js/09/input.txt').map( a => a.split(' ').map(Number) );
 
 const is0 = (n) => (n===0);
 

@@ -1,7 +1,7 @@
 const {isGamePossible, possibeGamesCheckSum, powerOfCubeSetsInGame, powerOfGamesCheckSum} = require('./cube-conundrum');
-const {readFileAndSplitLines} = require('../lib/readFile');
-const testInput = readFileAndSplitLines('./02/test.txt');
-const puzzleInput = readFileAndSplitLines('./02/input.txt');
+const {readFileLines} = require('../lib/readFile');
+const testInput = readFileLines('./02/test.txt');
+const puzzleInput = readFileLines('./02/input.txt');
 
 test.each([
     ['Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green', true],

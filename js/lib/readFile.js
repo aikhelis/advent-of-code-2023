@@ -5,8 +5,8 @@ function readFile(file) {
     return fs.readFileSync(path.resolve(file), 'utf8');
 }
 
-function readFileAndSplitLines(file) {
+function readFileLines(file) {
     return readFile(file).split('\n');
 }
 
-module.exports = {readFile, readFileAndSplitLines};
+module.exports = {readFile, readFileLines: readFileLines};

@@ -1,7 +1,7 @@
 const {cardPoints, cardValue, scratchcardsValuesCheckSum, scratchcardsTotalCount} = require('./scratchcards');
-const {readFileAndSplitLines} = require('../lib/readFile');
-const puzzleInput = readFileAndSplitLines('./04/input.txt');
-const testInput   = readFileAndSplitLines('./04/test.txt');
+const {readFileLines} = require('../lib/readFile');
+const puzzleInput = readFileLines('./04/input.txt');
+const testInput   = readFileLines('./04/test.txt');
 
 const testCardPoints = [ 4, 2, 2, 1, 0, 0 ];
 const testCardValues = [ 8, 2, 2, 1, 0, 0 ];

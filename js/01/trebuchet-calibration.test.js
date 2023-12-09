@@ -1,7 +1,7 @@
 const {decipherCalibrationValue, calibrationCheckSum} = require('./trebuchet-calibration');
-const {readFileAndSplitLines} = require('../lib/readFile');
-const testInput = readFileAndSplitLines('./01/test.txt');
-const puzzleInput = readFileAndSplitLines('./01/input.txt');
+const {readFileLines} = require('../lib/readFile');
+const testInput = readFileLines('./01/test.txt');
+const puzzleInput = readFileLines('./01/input.txt');
 
 test.each([
     ['12', 12],
