@@ -45,6 +45,3 @@ const input = puzzleInput;
 const [instructions, map] = parse(input);
 console.log(fromAAAtoZZZ());
 console.log(fromxxAToxxZ());
-
-
-
