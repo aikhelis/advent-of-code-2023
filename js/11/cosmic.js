@@ -15,21 +15,19 @@ const parse = (input) => input
 const isGalaxy = (x) => x!=0;
 const isSpace = (x) => x==0;
 
-const galaxiesIn = (grid) => grid.flat().filter(isGalaxy).map(g => g);
-
-function moveApart(galaxies, grid, multiplier) {
-    let listOfGalaxies = Array.from(galaxies);
+function galaxies(grid, spaceMultiplier) {
+    let galaxiesList = grid.flat().filter(isGalaxy).map(g => Object.assign({}, g));
     grid = transpose(grid); 
     for(let j = grid.length-1; j>=0; j--) {
         if (grid[j].every(isSpace)) 
-            listOfGalaxies.forEach(g => g.y > j ? g.y += (multiplier-1) : g.y)
+        galaxiesList.forEach(g => g.y += (g.y > j) ? (spaceMultiplier-1) : 0);
     }
     grid = transpose(grid); 
     for(let i = grid.length-1; i>=0; i--) {
         if (grid[i].every(isSpace)) 
-            listOfGalaxies.forEach(g => g.x > i ? g.x += (multiplier-1) : g.x)
+        galaxiesList.forEach(g => g.x += (g.x > i) ? (spaceMultiplier-1) : 0);
     }
-    return listOfGalaxies;
+    return galaxiesList;
 }
 
 const distanceAtoB = (a, b) => Math.abs(b.x - a.x) + Math.abs(b.y - a.y);
@@ -38,12 +36,6 @@ const allPairsDistancesIn = (list) => list.reduce((sum, a, i) => sum + distances
 
 // < main >
 const input = puzzleInput;
-let universe, galaxies;
-
-universe = parse(input);
-galaxies  = allPairsDistancesIn(moveApart(galaxiesIn(universe), universe, 2));
-console.log('With x  2: ' + galaxies); //10289334
-
-universe = parse(input);
-galaxies = allPairsDistancesIn(moveApart(galaxiesIn(universe), universe, 1000000));
-console.log('With x 1M: ' + galaxies); //649862989626
+const universe = parse(input);
+console.log( 'With x  2: ' + allPairsDistancesIn(galaxies(universe, 2)) ); //10289334
+console.log( 'With x 1M: ' + allPairsDistancesIn(galaxies(universe, 1000000)) ); //649862989626

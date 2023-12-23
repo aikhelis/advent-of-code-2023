@@ -28,8 +28,8 @@ class Box {
     }
     
     add(label, fLength) {
-        const replaced = this.lenses.find((elem, index) => {
-            if(elem.label === label) { this.lenses[index].fLength = fLength; return true; }
+        const replaced = this.lenses.find((elem, index, arr) => {
+            if(elem.label === label) { arr[index].fLength = fLength; return true; }
         }) 
         if(!replaced) this.lenses.push(new Lens(label, fLength));
     }
