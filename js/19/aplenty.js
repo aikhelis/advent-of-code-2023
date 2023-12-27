@@ -4,12 +4,12 @@ const puzzleInput  = readFileLines('./js/19/input.txt');
 
 // initial models
 class Part {
-    x;m;a;s; accepted;rejected;
+    x;m;a;s; accepted;
     constructor(x,m,a,s) {this.x=Number(x); this.m=Number(m); this.a=Number(a); this.s=Number(s);}
     get info() { return `{x=${this.x}, m=${this.m}, a=${this.a}, s=${this.s}}`; }
     get score() { return this.accepted ? (this.x + this.m + this.a + this.s) : 0; }
-    accept(){ this.accepted=true;  this.rejected=false; }
-    reject(){ this.accepted=false; this.rejected=true;  }
+    accept(){ this.accepted=true; }
+    reject(){ this.accepted=false; }
     canSatisfy(condition) { return (condition===undefined) || condition.canPassFor(this[condition.key]); }
 }
 
@@ -57,15 +57,15 @@ class Range {
 }
 
 class PartsSet {
-    x;m;a;s; accepted;rejected;split;
+    x;m;a;s; accepted;
     wfName; ruleNum;
     constructor(xRange, mRange, aRange, sRange, wfName, ruleNum) {
         this.x=xRange; this.m=mRange; this.a=aRange; this.s=sRange; this.wfName = wfName; this.ruleNum = ruleNum;
     }
     get info() { return `{x=${this.x.info}, m=${this.m.info}, a=${this.a.info}, s=${this.s.info}} in ${this.wfName}[${this.ruleNum}]`; }
     get score() { return this.accepted ? this.x.length * this.m.length * this.a.length * this.s.length : 0; }
-    accept(){ this.accepted=true;  this.rejected=false; }
-    reject(){ this.accepted=false; this.rejected=true;  }
+    accept(){ this.accepted=true; }
+    reject(){ this.accepted=false; }
     canSatisfy(condition)  { return condition===undefined || condition.canPassForRange(this[condition.key]); }
     canBeSplitBy(condition){ return condition===undefined ? false : condition.canSplitRange(this[condition.key]); }
     splitBy(condition){
@@ -77,7 +77,6 @@ class PartsSet {
         const pSetL = new PartsSet(this.x, this.m, this.a, this.s, this.wfName, this.ruleNum);
         const pSetR = new PartsSet(this.x, this.m, this.a, this.s, this.wfName, this.ruleNum);
         pSetL[condition.key] = newRanges[0]; pSetR[condition.key] = newRanges[1]; 
-        this.split = true;
         return [pSetL, pSetR];
     }
 }
