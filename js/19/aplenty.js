@@ -7,15 +7,10 @@ class Part {
     x;m;a;s; accepted;rejected;
     constructor(x,m,a,s) {this.x=Number(x); this.m=Number(m); this.a=Number(a); this.s=Number(s);}
     get info() { return `{x=${this.x}, m=${this.m}, a=${this.a}, s=${this.s}}`; }
+    get score() { return this.accepted ? (this.x + this.m + this.a + this.s) : 0; }
     accept(){ this.accepted=true;  this.rejected=false; }
     reject(){ this.accepted=false; this.rejected=true;  }
-    satisfies(condition) {
-        return (condition===undefined) || condition.passesFor(this[condition.key]);
-    }
-    get score() { 
-        if (this.accepted) return this.x + this.m + this.a + this.s; 
-        else return 0;
-    }
+    canSatisfy(condition) { return (condition===undefined) || condition.canPassFor(this[condition.key]); }
 }
 
 class Condition {
@@ -27,9 +22,9 @@ class Condition {
     }
     get info(){return '' + this.key + this.operand + this.value; }
     get boundary() {return (this.operand==='<') ? (this.value - 1) : (this.value);}
-    passesFor(number) { return (this.operand==='<') ? (number < this.value) : (number > this.value); }
-    passesForRange(range) { return this.passesFor(range.min) && this.passesFor(range.max); }
-    splitsRange(range) { return this.passesFor(range.min) !== this.passesFor(range.max); }
+    canPassFor(number) { return (this.operand==='<') ? (number < this.value) : (number > this.value); }
+    canPassForRange(range) { return this.canPassFor(range.min) && this.canPassFor(range.max); }
+    canSplitRange(range) { return this.canPassFor(range.min) !== this.canPassFor(range.max); }
  }
 
 class Rule {
@@ -52,7 +47,7 @@ class Range {
     constructor(min,max){this.min=min; this.max=max;}
     get info(){return `${this.min}..${this.max}`;}
     get length(){return this.max - this.min + 1;}
-    split(boundary) {
+    splitAt(boundary) {
         if(boundary < this.min || boundary >= this.max) {
             console.log(`Invalid boundary value ${boundary} for range ${this.info}`);
             return this;
@@ -68,111 +63,90 @@ class PartsSet {
         this.x=xRange; this.m=mRange; this.a=aRange; this.s=sRange; this.wfName = wfName; this.ruleNum = ruleNum;
     }
     get info() { return `{x=${this.x.info}, m=${this.m.info}, a=${this.a.info}, s=${this.s.info}} in ${this.wfName}[${this.ruleNum}]`; }
+    get score() { return this.accepted ? this.x.length * this.m.length * this.a.length * this.s.length : 0; }
     accept(){ this.accepted=true;  this.rejected=false; }
     reject(){ this.accepted=false; this.rejected=true;  }
-
-    canBeSplitBy(condition){
-        if(condition===undefined) return false;
-        return condition.splitsRange(this[condition.key]);
-    };
+    canSatisfy(condition)  { return condition===undefined || condition.canPassForRange(this[condition.key]); }
+    canBeSplitBy(condition){ return condition===undefined ? false : condition.canSplitRange(this[condition.key]); }
     splitBy(condition){
         if(!this.canBeSplitBy(condition)) {
             console.log(`cannot split as conditiion boundary is not splitting the range`);
             return [];
         }
-        let i; switch (condition.key) {
-            case 'x': i=0; break;
-            case 'm': i=1; break;
-            case 'a': i=2; break;
-            case 's': i=3; break;
-        }
-        const newRanges = this[condition.key].split(condition.boundary);
-        let newXmasL = [this.x, this.m, this.a, this.s]; newXmasL[i] = newRanges[0];
-        let newXmasR = [this.x, this.m, this.a, this.s]; newXmasR[i] = newRanges[1];
-        const newPSetL = new PartsSet(...newXmasL, this.wfName, this.ruleNum);
-        const newPSetR = new PartsSet(...newXmasR, this.wfName, this.ruleNum);
+        const newRanges = this[condition.key].splitAt(condition.boundary);
+        const pSetL = new PartsSet(this.x, this.m, this.a, this.s, this.wfName, this.ruleNum);
+        const pSetR = new PartsSet(this.x, this.m, this.a, this.s, this.wfName, this.ruleNum);
+        pSetL[condition.key] = newRanges[0]; pSetR[condition.key] = newRanges[1]; 
         this.split = true;
-        return [newPSetL, newPSetR];
-    }
-    satisfies(condition) {
-        return (condition===undefined) || condition.passesForRange(this[condition.key]);
-    }
-    get score() { 
-        const s = this.accepted ? this.x.length * this.m.length * this.a.length * this.s.length : 0;
-        // console.log(`SCORE of ${this.info} = ${s}`);
-        return s;
+        return [pSetL, pSetR];
     }
 }
 
 // <part1>
-function runWorkflow(workflow, part) {
-    let name = workflow.name;
+function partScoreInWorkflow(part, workflow) {
     for (const rule of workflow.rules) {
-        if(part.satisfies(rule.condition)) {
-            name = rule.action;
-            if(name==='A') { part.accept(); return true; } 
-            else if(name==='R') { part.reject(); return false; } 
-            else { return runWorkflow(WORKFLOWS.get(name), part); }
+        if(part.canSatisfy(rule.condition)) {
+            const name = rule.action;
+            if(name==='A') { part.accept(); return part.score; } 
+            else if(name==='R') { part.reject(); return part.score; } 
+            else { return partScoreInWorkflow(part, WORKFLOWS.get(name)); }
         } 
     };
 }
 
-function acceptedPartsRatingCheckSum(){
-    return PARTS.reduce((sum, part) => {
-        runWorkflow(WORKFLOWS.get('in'), part);
-        return sum + part.score;
-    }, 0);
-}
+const acceptedPartsScoresCheckSum = () => 
+    PARTS.reduce((sum, part) => sum + partScoreInWorkflow(part, WORKFLOWS.get('in')), 0);
 
 // <part2>
-function processPartsSet(pSet) {
-    const wf = WORKFLOWS.get(pSet.wfName);
-    const rule = wf.rules[pSet.ruleNum];
-    const condition = rule.condition;
-    // console.log(`processing set ${pSet.info} with rule ${rule.info}`);
+function partsSetScore(pSet) {
+    const wf = WORKFLOWS.get(pSet.wfName), rule = wf.rules[pSet.ruleNum], condition = rule.condition;
     if(pSet.canBeSplitBy(condition)){
-        // console.log(`splitting ${pSet.info} at ${condition.key}=${condition.boundary}`);
         let [pSetL, pSetR] = pSet.splitBy(condition);
-        return processPartsSet(pSetL) + processPartsSet(pSetR);
+        return partsSetScore(pSetL) + partsSetScore(pSetR);
     }
-    if(pSet.satisfies(condition)){
+    if(pSet.canSatisfy(condition)){
         const action = rule.action;
         if(action==='A') { pSet.accept(); return pSet.score; } 
         else if(action==='R') { pSet.reject(); return pSet.score; } 
         else { 
             pSet.wfName = action; pSet.ruleNum=0;
-            return processPartsSet(pSet); 
+            return partsSetScore(pSet); 
         }
     } else {
         pSet.ruleNum++;
-        return processPartsSet(pSet);
+        return partsSetScore(pSet);
     }
 }
 
-function acceptablePartsCheckSum() {
+function acceptablePartsScoresCheckSum() {
     const fullRange = new Range(1, 4000);
     const pSet = new PartsSet(fullRange, fullRange, fullRange, fullRange, 'in', 0);
-    return processPartsSet( pSet );
+    return partsSetScore( pSet );
 }
 
 // <main>
-function parse(lines){
-    let workflows=new Map(), parts=[];
-    input.forEach( line => {
-        const matchPart = line.match( /^\{x=(\d+),m=(\d+),a=(\d+),s=(\d+)\}$/ );
-        if(matchPart) parts.push( new Part(...matchPart.slice(1)) );  
+const defined = (x) => x !== undefined;
 
-        const workflowMatch = line.match (/^([\w]+)\{(.+)\}$/ );
-        if(workflowMatch) {
-            let [name, rules] = [ workflowMatch[1], workflowMatch[2] ];
+const parseParts = (lines) => 
+    lines.map(line => {
+        const match = line.match( /^\{x=(\d+),m=(\d+),a=(\d+),s=(\d+)\}$/ );
+        return match ? new Part(...match.slice(1)) : undefined;  
+    }).filter(defined);
+
+function parseWorkflows(lines){
+    let workflows = new Map();
+    lines.forEach(line => {
+        const match = line.match (/^([\w]+)\{(.+)\}$/ );
+        if(match) {
+            let [name, rules] = [ match[1], match[2] ];
             rules = rules.split(',').map( rule => new Rule(...rule.split(':').reverse()) );
             workflows.set(name, new Workflow(name, rules));
         }
     });
-    return [workflows, parts];
+    return workflows;
 }
 
 const input = puzzleInput;
-let [WORKFLOWS, PARTS] = parse(input);
-console.log(acceptedPartsRatingCheckSum());
-console.log(acceptablePartsCheckSum());
+let [WORKFLOWS, PARTS] = [parseWorkflows(input), parseParts(input)];
+console.log(acceptedPartsScoresCheckSum());
+console.log(acceptablePartsScoresCheckSum());
