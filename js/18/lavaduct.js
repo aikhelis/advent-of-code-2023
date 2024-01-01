@@ -48,7 +48,7 @@ const parsePart2 = (lines) => parse(lines, true);
 const shoelaceArea          = (edges) => Math.abs(edges.reduce((s, e) => s + e.determinant, 0) ) / 2;
 const perimeterSquaresCount = (edges) => edges.reduce((s, e) => s + e.length, 0);
 const innerSquaresCount     = (edges) => shoelaceArea(edges) - perimeterSquaresCount(edges)/2 + 1; //Pick's formula: Area = innerSquaresCount + perimeterSquaresCount/2 - 1
-const coveredSquaresCount   = (edges) => shoelaceArea(edges) + perimeterSquaresCount(edges)/2 + 1;//innerSquaresCount(edges) + perimeterSquaresCount(edges); 
+const coveredSquaresCount   = (edges) => innerSquaresCount(edges) + perimeterSquaresCount(edges); 
 
 
 // complimentary: draw part 1 
